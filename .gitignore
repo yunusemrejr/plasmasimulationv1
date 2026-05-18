@@ -1,0 +1,15 @@
+# PlasmaSim ignores
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+build/
+dist/
+*.egg-info/
+.env
+*.log
+.DS_Store
+.idea/
+.vscode/
