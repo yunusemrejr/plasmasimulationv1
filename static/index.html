@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>D-T Fusion &middot; Plasma Simulation</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Full-viewport simulation canvas -->
+  <canvas id="c"></canvas>
+
+  <!-- UI overlay layer -->
+  <div id="ui">
+
+    <!--
+      Panel: Scientific instrument readout
+      Data grid layout (not label+span pairs)
+    -->
+    <aside id="panel" role="region" aria-label="Reactor diagnostics">
+
+      <div id="panel-header">
+        <span id="panel-indicator"></span>
+        <h1 id="title">D-T FUSION REACTOR</h1>
+      </div>
+
+      <div id="status">
+        <span class="dot"></span>
+        <span class="status-text">Operational</span>
+      </div>
+
+      <!-- Diagnostics grid -->
+      <div id="diagnostics">
+        <div class="diag-row">
+          <span class="diag-label">PARTICLES</span>
+          <span class="diag-value" id="count">148</span>
+        </div>
+        <div class="diag-row">
+          <span class="diag-label">FUSIONS</span>
+          <span class="diag-value" id="fusions">0</span>
+        </div>
+        <div class="diag-row">
+          <span class="diag-label">ENERGY</span>
+          <span class="diag-value" id="energy">0 MeV</span>
+        </div>
+        <div class="diag-row">
+          <span class="diag-label">TEMP</span>
+          <span class="diag-value" id="temp">150 MK</span>
+        </div>
+      </div>
+
+      <!-- Temperature bar -->
+      <div id="temp-bar-container">
+        <div id="tempbar" class="bar-fill"></div>
+      </div>
+
+      <!-- Time scale readout -->
+      <div id="timescale">
+        <span class="ts-label">TIME SCALE</span>
+        <span class="ts-value">&times;10<sup>12</sup></span>
+      </div>
+
+      <!-- Control buttons: text only, no emoji -->
+      <div id="controls">
+        <button id="pause-btn" class="primary">Pause</button>
+        <button id="reset-btn">Reset</button>
+      </div>
+
+      <button id="learn-btn" class="btn-learn">Learn</button>
+
+    </aside>
+
+    <!--
+      Info bar: Bottom instrument readout strip
+    -->
+    <footer id="info" role="status" aria-label="Reaction parameters">
+      <span class="rx">D + T &rarr; <sup>4</sup>He + n + 17.59 MeV</span>
+      <span class="pipe">|</span>
+      <span class="badge">&times;10<sup>12</sup> <strong>time dilation</strong></span>
+      <span class="pipe">|</span>
+      <span class="badge">Coulomb <strong>tunneling</strong></span>
+      <span class="note-end">drag to rotate &middot; ESC to close</span>
+    </footer>
+
+  </div>
+
+  <!--
+    Educational modal
+    Clean header with language toggle, scrollable body, footer hint
+  -->
+  <div id="education-modal" class="modal" aria-hidden="true" role="dialog" aria-label="Educational content">
+
+    <div class="modal-content">
+
+      <header class="modal-header">
+        <div class="lang-switch">
+          <button class="lang-btn active" data-lang="en">English</button>
+          <button class="lang-btn" data-lang="tr">Türkçe</button>
+        </div>
+        <button class="close-btn" aria-label="Close">&times;</button>
+      </header>
+
+      <div id="edu-content" class="edu-content"></div>
+
+      <footer class="modal-footer">
+        <small>Drag anywhere on the simulation to rotate the view &middot; Close with ESC or click outside</small>
+      </footer>
+
+    </div>
+
+  </div>
+
+  <!-- ES Modules entry point -->
+  <script type="module" src="js/main.js"></script>
+
+</body>
+</html>
