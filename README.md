@@ -1,85 +1,117 @@
-# DT Fusion Plasma Simulator
+# Plasma Simulation v1
 
-Real-time 3D particle simulation of Deuterium-Tritium fusion inside a magnetic confinement reactor.
+**Real-time 3D Deuterium-Tritium Fusion Plasma Simulator**
 
-Originally a single 300-line `index.html`. Now decomposed into a clean, maintainable frontend architecture served by a Python Flask backend.
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-## Why the Flask backend?
+A interactive, real-time particle simulation of fusion plasma in a magnetic confinement environment. Built with a lightweight Python Flask backend serving a modular vanilla JavaScript + HTML5 Canvas frontend.
 
-Running the simulation via `file://` has many browser restrictions:
-- ES modules often blocked or require special flags
-- No proper MIME types for `.js` modules
-- Future plans (WebSockets, API calls, recording, ML inference) would hit CORS / security walls
+Originally prototyped as a monolithic `index.html`, the project has been cleanly refactored for maintainability, extensibility, and to bypass browser security restrictions on local file access.
 
-The Flask server solves this by serving everything over `http://127.0.0.1:<random>`.
+## Overview
+
+This simulator models charged particles (Deuterium, Tritium, fusion products) under the influence of:
+
+- Coulomb interactions
+- Thermal motion
+- Probabilistic nuclear fusion (D-T reactions)
+- Simplified magnetic confinement boundaries
+
+It provides an intuitive visual window into plasma behavior and fusion events at extreme time dilation, allowing observation of nuclear-scale phenomena in real time.
+
+## Key Features
+
+- **Real-time 3D Visualization**: Pseudo-3D rendering with depth sorting, particle glows, trails, and spark effects on fusion
+- **Interactive Controls**: Mouse/touch drag to rotate the view; pause, resume, and reset simulation
+- **Live Diagnostics**: Particle count, fusion events, total energy released, and visual temperature feedback
+- **One-Click Launch**: `run.sh` handles virtual environment, dependencies, random free port selection, and auto-opens browser
+- **Modular Architecture**: Separated concerns across physics, rendering, UI, and constants for easy extension
+- **Future-Ready Backend**: Flask server enables WebSockets, REST APIs, logging, and ML integration without CORS issues
+
+## Quick Start
+
+### Prerequisites
+
+- Python 3.8 or higher
+- A modern browser (Chrome, Firefox, or Edge recommended)
+
+### Launch the Simulation
+
+```bash
+git clone https://github.com/yunusemrejr/plasmasimulationv1.git
+cd plasmasimulationv1
+./run.sh
+```
+
+The launcher script (`run.sh`) will:
+1. Create a local virtual environment (`.venv`) if needed
+2. Activate the environment
+3. Install dependencies from `requirements.txt` (with robust fallback logic)
+4. Verify Flask installation
+5. Start `app.py`, which selects a random free port, prints connection info, and automatically opens the simulation in your default browser
+
+Stop the server anytime with **Ctrl + C**.
+
+## Controls
+
+| Control              | Action                                      |
+|----------------------|---------------------------------------------|
+| -------------------- | ------------------------------------------- |
+| **Drag** (mouse/touch) | Rotate the 3D plasma view horizontally     |
+| **Pause / Resume**   | Toggle the simulation animation            |
+| **Reset**            | Restore initial 148 particles and clear stats |
+
+All key metrics update live in the on-screen panel.
 
 ## Project Structure
 
 ```
-plasmasim/
-├── run.sh              # One-click launcher (handles venv + deps + random port)
-├── app.py              # Flask server - finds free port, serves static/, auto-opens browser
-├── requirements.txt    # Python deps (Flask)
+plasmasimulationv1/
+├── run.sh              # One-click launcher (venv, deps, random port, browser)
+├── app.py              # Flask server + auto browser launch
+├── requirements.txt    # Python dependencies
 ├── .gitignore
 ├── README.md
 └── static/
-    ├── index.html      # Clean shell
+    ├── index.html      # Main HTML shell
     ├── css/
-    │   └── style.css   # All UI styling (glassmorphic panel, glows, etc.)
+    │   └── style.css   # Glassmorphic UI styling
     └── js/
-        ├── constants.js   # Physical constants (K, fusion thresholds, colors…)
-        ├── particle.js    # Particle class (D, T, He, n) with mass/charge/radius/life
-        ├── physics.js     # Coulomb, thermal kicks, fusion detection, momentum conservation, boundary
-        ├── renderer.js    # Pseudo-3D projection, depth sorting, canvas drawing + sparks + glow
-        ├── ui.js          # Buttons, live stats, pointer (mouse+touch) rotation
-        └── main.js        # Orchestration, animation loop, world state
+        ├── constants.js   # Physical constants, colors, thresholds
+        ├── particle.js    # Particle class (D, T, He, n)
+        ├── physics.js     # Forces, fusion logic, boundaries
+        ├── renderer.js    # Canvas drawing, projection, effects
+        ├── ui.js          # Controls and live stats
+        └── main.js        # Animation loop and orchestration
 ```
-
-## How to Run
-
-### Recommended (double-click or terminal)
-
-```bash
-cd plasmasim
-./run.sh
-```
-
-What `run.sh` does:
-1. Creates a local `.venv` (if missing)
-2. Activates it
-3. Runs `pip install -r requirements.txt` with **multiple fallback strategies** if the first attempt fails (upgrade pip, no-cache, direct Flask, even system `apt` packages)
-4. Verifies Flask can be imported
-5. Executes `app.py`
-
-`app.py` will:
-- Pick a completely random free TCP port (never collides with 5000 or anything)
-- Print a nice banner with the URL
-- Automatically open your default browser
-- Serve the entire modular frontend
-
-Press **Ctrl+C** in the terminal to stop the server.
-
-## Controls (in the simulation)
-
-- **Drag** (mouse or touch) horizontally on the canvas → rotate the plasma
-- **Pause** / **Resume** button
-- **Reset** button (restores 148 particles, clears energy & fusion count)
-- Live updating: particle count, fusions, total energy released, temperature (visual)
 
 ## Technical Notes
 
-- Physics timestep is intentionally throttled to ~60 Hz for stability
-- 10¹²× time dilation so you can watch 10⁻¹² s nuclear events
-- Simple but physically inspired model (soft Coulomb + thermal + tunneling prob)
-- Neutron lifetime limited (they eventually leave the viewport)
-- All original visual behavior preserved exactly (depth sort, shadow glow, trail fade, spark burst on fusion)
+- **Physics**: Soft Coulomb repulsion + thermal velocity perturbations + tunneling-inspired fusion probability. Momentum is conserved on fusion.
+- **Time Scaling**: ~10¹²× dilation so nuclear events (10⁻¹² s) are observable.
+- **Performance**: Throttled to ~60 Hz update rate for visual stability.
+- **Neutron Handling**: Limited lifetime; particles eventually exit the viewport.
+- **Visual Fidelity**: All original behaviors (depth sort, shadow glow, trail fade, fusion burst) preserved.
 
-## Future Extensions (easy because of clean split)
+## Roadmap & Extensions
 
-- Add a `/api/fusion_events` endpoint returning live JSON
-- WebSocket live particle streaming to another visualizer
-- Record fusion statistics to CSV
-- Parameter sliders that call into the physics module
-- Three.js upgrade path (renderer is already isolated)
+Because of the clean frontend/backend split, adding features is straightforward:
 
-Enjoy watching the stars in a bottle!
+- REST API endpoint for live fusion event data
+- WebSocket streaming to external visualizers or dashboards
+- CSV export of simulation statistics
+- Sliders for real-time parameter tuning (temperature, density, etc.)
+- Upgrade renderer to Three.js / WebGL for full 3D
+- Integration with machine learning models for surrogate physics
+
+## Contributing
+
+Pull requests and issues are welcome. Please open a discussion for major changes.
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
+---
+
+*"Watching the stars in a bottle."*
